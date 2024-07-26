@@ -7,6 +7,18 @@ export const createUser = (
 ) => {
   const formattedUser = [username, email, password];
 
+  if (!username || !email || !password) {
+    return Promise.reject({ status: 400, message: "Bad request." });
+  }
+
+  if (
+    typeof username !== "string" ||
+    typeof email !== "string" ||
+    typeof password !== "string"
+  ) {
+    return Promise.reject({ status: 400, message: "Bad request." });
+  }
+
   return db
     .query(
       `INSERT INTO users (username, email, password)
