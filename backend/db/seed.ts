@@ -7,7 +7,8 @@ export const seed = () => {
       user_id SERIAL PRIMARY KEY, 
       username VARCHAR NOT NULL, 
       email VARCHAR NOT NULL, 
-      password VARCHAR NOT NULL);`
+      password VARCHAR NOT NULL,
+      UNIQUE (username, email));`
     );
   });
 };
