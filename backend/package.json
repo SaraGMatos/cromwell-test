@@ -9,7 +9,7 @@
     "start-dev": "npm run build && dotenvx run --env-file=.env.development -- nodemon dist/listen.js",
     "start-prod": "npm run build && dotenvx run --env-file=.env.production -- nodemon dist/listen.js",
     "setup-dbs": "psql -f ./db/setup.sql",
-    "seed": "node dist/db/run-seed.js"
+    "seed": "dotenvx run --env-file=.env.development -- node dist/db/run-seed.js"
   },
   "keywords": [],
   "author": "",
