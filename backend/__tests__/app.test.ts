@@ -13,7 +13,7 @@ beforeEach(() => {
 });
 
 describe("API", () => {
-  describe("/user/register", () => {
+  describe("POST /user/register", () => {
     test("POST 200: Responds with the posted user's id", () => {
       return request(app)
         .post("/user/register")
@@ -23,11 +23,15 @@ describe("API", () => {
           password: "Test1",
         })
         .expect(200)
-        .then(({ body }) => {
+        .then(({ body, headers }) => {
+          console.log(headers);
           const { user } = body;
 
           expect(user).toMatchObject({
             user_id: 6,
+          });
+          expect(headers).toMatchObject({
+            location: "/user/6",
           });
         });
     });
@@ -77,7 +81,7 @@ describe("API", () => {
     });
   });
 
-  describe("/user/login", () => {
+  describe("POST /user/login", () => {
     test("POST 200: Responds with the logged user's id'", () => {
       return request(app)
         .post("/user/login")
@@ -145,7 +149,7 @@ describe("API", () => {
     });
   });
 
-  describe("/user/:id", () => {
+  describe("GET /user/:id", () => {
     test("GET 200: Responds with the required user object", () => {
       return request(app)
         .get("/user/1")
