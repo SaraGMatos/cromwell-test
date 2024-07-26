@@ -130,5 +130,50 @@ describe("API", () => {
           expect(body.message).toBe("Not found.");
         });
     });
+
+    test("POST 400: Responds with an adequate status and error message when the password provided does not match", () => {
+      return request(app)
+        .post("/user/login")
+        .send({
+          email: "john23@test.com",
+          password: "test4",
+        })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.message).toBe("Bad request.");
+        });
+    });
+  });
+
+  describe("/user/:id", () => {
+    test("GET 200: Responds with the required user object", () => {
+      return request(app)
+        .get("/user/1")
+        .expect(200)
+        .then(({ body }) => {
+          const { user } = body;
+
+          expect(user.username).toBe("John23");
+          expect(user.email).toBe("john23@test.com");
+        });
+    });
+
+    test("GET 404: Responds with an adequate status and error message when given a non-existent id", () => {
+      return request(app)
+        .get("/user/99")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.message).toBe("Not found.");
+        });
+    });
+
+    test("GET 400: Responds with an error when passed an id of an invalid data type", () => {
+      return request(app)
+        .get("/user/invalid-id")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.message).toBe("Bad request.");
+        });
+    });
   });
 });
