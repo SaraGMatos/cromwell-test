@@ -14,7 +14,7 @@ beforeEach(() => {
 
 describe("API", () => {
   describe("/user/register", () => {
-    test("POST 200: Responds with the posted user object and its required keys", () => {
+    test("POST 200: Responds with the posted user's id", () => {
       return request(app)
         .post("/user/register")
         .send({
@@ -27,9 +27,7 @@ describe("API", () => {
           const { user } = body;
 
           expect(user).toMatchObject({
-            username: "Sara",
-            email: "test@gmail.com",
-            password: "Test1",
+            user_id: 6,
           });
         });
     });
@@ -58,25 +56,78 @@ describe("API", () => {
         });
     });
 
-    test("POST 403: Responds with an adequate status and error message when the user already exists", () => {
+    test("POST 409: Responds with an adequate status and error message when the user already exists", () => {
       db.query(
         `INSERT INTO users (username, email, password)
-    VALUES ($1, $2, $3) RETURNING *`,
+      VALUES ($1, $2, $3) RETURNING *`,
         ["Sara", "test@gmail.com", "test1"]
-      ).then(({ rows }) => {
-        console.log(rows);
+      ).then(() => {
+        return request(app)
+          .post("/user/register")
+          .send({
+            username: "Sara",
+            email: "test@gmail.com",
+            password: "Test",
+          })
+          .expect(409)
+          .then(({ body }) => {
+            expect(body.message).toBe("Already exists.");
+          });
       });
+    });
+  });
 
+  describe("/user/login", () => {
+    test("POST 200: Responds with the logged user's id'", () => {
       return request(app)
-        .post("/user/register")
+        .post("/user/login")
         .send({
-          username: "Sara",
-          email: "test@gmail.com",
-          password: "Test",
+          email: "john23@test.com",
+          password: "test",
         })
-        .expect(403)
+        .expect(200)
         .then(({ body }) => {
-          expect(body.message).toBe("Already exists.");
+          const { user } = body;
+          console.log(user);
+          expect(user).toMatchObject({
+            user_id: 1,
+          });
+        });
+    });
+
+    test("POST 400: Responds with an adequate status and error message when provided with malformed body", () => {
+      return request(app)
+        .post("/user/login")
+        .send({ email: "john23@test.com" })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.message).toBe("Bad request.");
+        });
+    });
+
+    test("POST 400: Responds with an adequate status and error message when the data type of the body's property values are not correct", () => {
+      return request(app)
+        .post("/user/login")
+        .send({
+          email: 77,
+          password: 3,
+        })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.message).toBe("Bad request.");
+        });
+    });
+
+    test("POST 404: Responds with an adequate status and error message when the user does not exist", () => {
+      return request(app)
+        .post("/user/login")
+        .send({
+          email: "sara@test.com",
+          password: "test",
+        })
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.message).toBe("Not found.");
         });
     });
   });
