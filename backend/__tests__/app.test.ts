@@ -88,7 +88,7 @@ describe("API", () => {
         .expect(200)
         .then(({ body }) => {
           const { user } = body;
-          console.log(user);
+
           expect(user).toMatchObject({
             user_id: 1,
           });
