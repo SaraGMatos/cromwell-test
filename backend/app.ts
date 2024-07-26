@@ -1,5 +1,9 @@
 import express, { Application } from "express";
-import { postUser } from "./controllers/user.controllers";
+import {
+  getUser,
+  registerUser,
+  signInUser,
+} from "./controllers/user.controllers";
 import {
   sendCustomError,
   sendPsqlError,
@@ -9,7 +13,11 @@ export const app: Application = express();
 
 app.use(express.json());
 
-app.post("/user/register", postUser);
+app.post("/user/register", registerUser);
+
+app.post("/user/login", signInUser);
+
+app.get("/user/:user_id", getUser);
 
 app.use(sendCustomError);
 
