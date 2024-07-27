@@ -1,5 +1,8 @@
+import { LoginPage } from "./components/LoginPage";
+// import { RegisterPage } from "./components/RegisterPage";
+
 function App() {
-  return <h1 className="font-bold">Hello</h1>;
+  return <LoginPage />;
 }
 
 export default App;
