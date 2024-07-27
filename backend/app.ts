@@ -1,8 +1,11 @@
 import express, { Application } from "express";
 import { getUserById, registerUser, signInUser } from "./controllers";
 import { sendCustomError, sendServerError } from "./error_handlers";
+import cors from "cors";
 
 export const app: Application = express();
+
+app.use(cors());
 
 app.use(express.json());
 
