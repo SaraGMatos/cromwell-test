@@ -1,5 +1,7 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { loginUser } from "../api";
+import { useNavigate } from "react-router-dom";
+import { ErrorAlert } from "./ErrorAlert";
 
 export function LoginPage(): JSX.Element {
   const [email, setEmail] = useState("");
@@ -9,10 +11,24 @@ export function LoginPage(): JSX.Element {
   const [passwordInputError, setPasswordInputError] = useState("");
 
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+  const [isLoginError, setIsLoginError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const navigate = useNavigate();
 
   function handleSubmit(event: FormEvent): void {
     event?.preventDefault();
-    loginUser(email, password);
+    loginUser(email, password)
+      .then(() => {
+        setIsLoginError(false);
+      })
+      .catch((error) => {
+        setIsLoginError(true);
+
+        error.response.status === 404
+          ? setErrorMessage("User not found, please sign up instead.")
+          : setErrorMessage("Invalid email or password.");
+      });
   }
 
   function handleEmailBlur(): void {
@@ -65,6 +81,7 @@ export function LoginPage(): JSX.Element {
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
+              {isLoginError && <ErrorAlert message={errorMessage} />}
               <label
                 htmlFor="email"
                 className="block text-sm font-medium leading-6 text-gray-900"
@@ -133,12 +150,14 @@ export function LoginPage(): JSX.Element {
 
           <p className="mt-10 text-center text-sm text-gray-500">
             Not a member?{" "}
-            <a
-              href="#"
+            <button
+              onClick={() => {
+                navigate("/register");
+              }}
               className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
             >
               Sign up here!
-            </a>
+            </button>
           </p>
         </div>
       </div>
