@@ -1,5 +1,8 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { createUser } from "../api";
+import { useNavigate } from "react-router-dom";
+import { ErrorAlert } from "./ErrorAlert";
+import SuccessAlert from "./SuccessAlert";
 
 export function RegisterPage(): JSX.Element {
   const [username, setUsername] = useState("");
@@ -11,10 +14,29 @@ export function RegisterPage(): JSX.Element {
   const [passwordInputError, setPasswordInputError] = useState("");
 
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+  const [isRegisterError, setIsRegisterError] = useState(false);
+  const [isResponseSuccessful, setIsResponseSuccessful] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const navigate = useNavigate();
 
   function handleSubmit(event: FormEvent): void {
     event?.preventDefault();
-    createUser(username, email, password);
+    createUser(username, email, password)
+      .then(() => {
+        setIsRegisterError(false);
+        setIsResponseSuccessful(true);
+      })
+      .catch((error) => {
+        setIsRegisterError(true);
+        setIsResponseSuccessful(false);
+
+        error.response.status === 409
+          ? setErrorMessage(
+              "There is an account registered under this email, please log in instead."
+            )
+          : setErrorMessage("Something went wrong!");
+      });
   }
 
   function handleUsernameBlur(): void {
@@ -80,6 +102,12 @@ export function RegisterPage(): JSX.Element {
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
+              {isRegisterError && <ErrorAlert message={errorMessage} />}
+              {isResponseSuccessful && (
+                <SuccessAlert
+                  message={`Account created! Please proceed to the log in page using the link at the bottom.`}
+                />
+              )}
               <label
                 htmlFor="username"
                 className="block text-sm font-medium leading-6 text-gray-900"
@@ -189,12 +217,14 @@ export function RegisterPage(): JSX.Element {
 
           <p className="mt-10 text-center text-sm text-gray-500">
             Already a member?{" "}
-            <a
-              href="#"
+            <button
+              onClick={() => {
+                navigate("/");
+              }}
               className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
             >
               Log in here!
-            </a>
+            </button>
           </p>
         </div>
       </div>
