@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { createUser } from "../api";
 
 export function RegisterPage(): JSX.Element {
@@ -10,6 +10,8 @@ export function RegisterPage(): JSX.Element {
   const [emailInputError, setEmailInputError] = useState("");
   const [passwordInputError, setPasswordInputError] = useState("");
 
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+
   function handleSubmit(event: FormEvent): void {
     event?.preventDefault();
     createUser(username, email, password);
@@ -17,10 +19,12 @@ export function RegisterPage(): JSX.Element {
 
   function handleUsernameBlur(): void {
     if (username.length < 7) {
+      setIsButtonDisabled(true);
       setUsernameInputError(
         "Please make sure your username matches the requirements."
       );
     } else {
+      setIsButtonDisabled(false);
       setUsernameInputError("");
     }
   }
@@ -28,8 +32,10 @@ export function RegisterPage(): JSX.Element {
   function handleEmailBlur(): void {
     const emailRegexPattern = /^[\w-\.]+@([\w-]+\.)+[\w]{2,4}$/g;
     if (!emailRegexPattern.test(email)) {
+      setIsButtonDisabled(true);
       setEmailInputError("Please make sure you are entering a valid email.");
     } else {
+      setIsButtonDisabled(false);
       setEmailInputError("");
     }
   }
@@ -39,13 +45,23 @@ export function RegisterPage(): JSX.Element {
       /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{10,}$/g;
 
     if (!passwordRegexPattern.test(password)) {
+      setIsButtonDisabled(true);
       setPasswordInputError(
         "Please make sure your password matches the requirements."
       );
     } else {
+      setIsButtonDisabled(false);
       setPasswordInputError("");
     }
   }
+
+  useEffect(() => {
+    if (emailInputError || passwordInputError) {
+      setIsButtonDisabled(true);
+    } else {
+      setIsButtonDisabled(false);
+    }
+  }, [isButtonDisabled]);
 
   return (
     <section className="h-full bg-white">
@@ -163,6 +179,7 @@ export function RegisterPage(): JSX.Element {
             <div>
               <button
                 type="submit"
+                disabled={isButtonDisabled}
                 className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 Sign up
