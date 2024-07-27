@@ -19,8 +19,12 @@ export function LoginPage(): JSX.Element {
   function handleSubmit(event: FormEvent): void {
     event?.preventDefault();
     loginUser(email, password)
-      .then(() => {
+      .then((result) => {
+        const id = result.data.user.user_id;
+
         setIsLoginError(false);
+
+        navigate(`/home/user/${id}`);
       })
       .catch((error) => {
         setIsLoginError(true);
