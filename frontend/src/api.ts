@@ -23,6 +23,6 @@ export const loginUser = (email: string, password: string) => {
   });
 };
 
-export const getUser = (id: number) => {
+export const getUser = (id: string | undefined) => {
   return cromwellApi.get(`/user/${id}`);
 };
