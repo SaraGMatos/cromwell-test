@@ -1,13 +1,7 @@
-import {
-  ChangeEvent,
-  FormEvent,
-  SyntheticEvent,
-  useEffect,
-  useState,
-} from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import { createUser } from "../api";
 
-export function RegisterPage() {
+export function RegisterPage(): JSX.Element {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,12 +10,12 @@ export function RegisterPage() {
   const [emailInputError, setEmailInputError] = useState("");
   const [passwordInputError, setPasswordInputError] = useState("");
 
-  function handleSubmit(event: FormEvent) {
+  function handleSubmit(event: FormEvent): void {
     event?.preventDefault();
     createUser(username, email, password);
   }
 
-  function handleUsernameBlur() {
+  function handleUsernameBlur(): void {
     if (username.length < 7) {
       setUsernameInputError(
         "Please make sure your username matches the requirements."
@@ -31,7 +25,7 @@ export function RegisterPage() {
     }
   }
 
-  function handleEmailBlur() {
+  function handleEmailBlur(): void {
     const emailRegexPattern = /^[\w-\.]+@([\w-]+\.)+[\w]{2,4}$/g;
     if (!emailRegexPattern.test(email)) {
       setEmailInputError("Please make sure you are entering a valid email.");
@@ -40,7 +34,7 @@ export function RegisterPage() {
     }
   }
 
-  function handlePasswordBlur() {
+  function handlePasswordBlur(): void {
     const passwordRegexPattern =
       /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{10,}$/g;
 
@@ -98,7 +92,7 @@ export function RegisterPage() {
                   htmlFor="username"
                   className="block text-[12px] font-medium leading-6 text-gray-600"
                 >
-                  Please ensure your username is at least 7 letter long
+                  Please ensure your username is at least 7 characters long
                 </label>
               </div>
             </div>
@@ -116,7 +110,7 @@ export function RegisterPage() {
                   name="email"
                   type="email"
                   value={email}
-                  onChange={(event) => {
+                  onChange={(event: ChangeEvent<HTMLInputElement>) => {
                     setEmail(event.target.value);
                   }}
                   onBlur={handleEmailBlur}
@@ -144,7 +138,7 @@ export function RegisterPage() {
                   name="password"
                   type="password"
                   value={password}
-                  onChange={(event) => {
+                  onChange={(event: ChangeEvent<HTMLInputElement>) => {
                     setPassword(event.target.value);
                   }}
                   onBlur={handlePasswordBlur}
