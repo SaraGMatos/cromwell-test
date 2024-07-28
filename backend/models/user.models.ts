@@ -23,23 +23,24 @@ const fetchUserByEmail = async (email: string): Promise<User | null> => {
   return user;
 };
 
-const saveUser = (
+const saveUser = async (
   username: string,
   email: string,
   hash: string
 ): Promise<number> => {
-  return db
-    .query(
-      `INSERT INTO users (username, email, password)
-        VALUES ($1, $2, $3) RETURNING user_id`,
-      [username, email, hash]
-    )
-    .then(({ rows }) => {
-      const { user_id } = rows[0];
+  const { rows } = await db.query(
+    `INSERT INTO users (username, email, password)
+      VALUES ($1, $2, $3) RETURNING user_id`,
+    [username, email, hash]
+  );
 
-      console.info(`Added user '${username}' in db`);
-      return user_id as number;
-    });
+  //TODO: Handle db failure [in the case where user_id is not returned]
+
+  const { user_id } = rows[0];
+
+  console.info(`Added user '${username}' in db`);
+
+  return user_id as number;
 };
 
 export const createUser = (
