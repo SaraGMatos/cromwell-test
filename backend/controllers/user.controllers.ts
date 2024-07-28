@@ -30,22 +30,26 @@ export const registerUser = (
     });
 };
 
-export const signInUser = (req: Request, res: Response, next: NextFunction) => {
+export const signInUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   const { email, password }: { email: string; password: string } = req.body;
 
   console.info(`Handling post method for login user with email '${email}'`);
 
-  logInUser(email, password)
-    .then((user_id) => {
-      console.info(`User with email '${email}' logged in successfully`);
+  try {
+    const user_id = await logInUser(email, password);
 
-      res.status(200).send({ user: { user_id } });
-    })
-    .catch((error) => {
-      console.error(`Error occurred logging user with email '${email}' in`);
+    console.info(`User with email '${email}' logged in successfully`);
 
-      next(error);
-    });
+    res.status(200).send({ user: { user_id } });
+  } catch (error: unknown) {
+    console.error(`Error occurred logging user with email '${email}' in`);
+
+    next(error);
+  }
 };
 
 export const getUserById = async (
@@ -65,11 +69,9 @@ export const getUserById = async (
 
     const user = await fetchUserById(formattedId);
 
-    if (user) {
-      console.info(`User with id '${user_id}' fetched successfully`);
+    console.info(`User with id '${user_id}' fetched successfully`);
 
-      res.status(200).send({ user });
-    }
+    res.status(200).send({ user });
   } catch (error: unknown) {
     console.error(`Error occurred fetching user with id '${user_id}'`);
 
