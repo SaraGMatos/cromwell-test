@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useContext, useEffect, useState } from "react";
 import { loginUser } from "../api";
 import { useNavigate } from "react-router-dom";
 import { ErrorAlert } from "./ErrorAlert";
@@ -20,11 +20,11 @@ export function LoginPage(): JSX.Element {
     event?.preventDefault();
     loginUser(email, password)
       .then((result) => {
-        const id = result.data.user.user_id;
+        localStorage.setItem("CROMWELL_AUTH_TOKEN", result.data.token);
 
         setIsLoginError(false);
 
-        navigate(`/home/user/${id}`);
+        navigate("/");
       })
       .catch((error) => {
         setIsLoginError(true);
