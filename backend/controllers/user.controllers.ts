@@ -40,11 +40,11 @@ export const signInUser = async (
   console.info(`Handling post method for login user with email '${email}'`);
 
   try {
-    const user_id = await logInUser(email, password);
+    const token = await logInUser(email, password);
 
     console.info(`User with email '${email}' logged in successfully`);
 
-    res.status(200).send({ user: { user_id } });
+    res.status(200).send({ token });
   } catch (error: unknown) {
     console.error(`Error occurred logging user with email '${email}' in`);
 
