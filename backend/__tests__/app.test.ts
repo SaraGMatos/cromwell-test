@@ -4,6 +4,7 @@ import { describe, test, expect } from "@jest/globals";
 import { db } from "../db/connection";
 import { seed } from "../db/seed";
 import { createUser } from "../models";
+import jwt from "jsonwebtoken";
 
 afterAll(() => {
   db.end();
@@ -94,9 +95,12 @@ describe("API", () => {
             })
             .expect(200)
             .then(({ body }) => {
-              const { user } = body;
+              const { token } = body;
 
-              expect(user).toMatchObject({
+              const secret = process.env.JWT_SIGNING_KEY!;
+              const payload = jwt.verify(token, secret);
+
+              expect(payload).toMatchObject({
                 user_id: 6,
               });
             });
