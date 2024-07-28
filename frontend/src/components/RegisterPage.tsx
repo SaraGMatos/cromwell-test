@@ -26,6 +26,10 @@ export function RegisterPage(): JSX.Element {
       .then(() => {
         setIsRegisterError(false);
         setIsResponseSuccessful(true);
+        //! Below makes the transition after successful register smoother
+        setTimeout(() => {
+          navigate("/login");
+        }, 300);
       })
       .catch((error) => {
         setIsRegisterError(true);
