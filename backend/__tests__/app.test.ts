@@ -3,6 +3,7 @@ import request from "supertest";
 import { describe, test, expect } from "@jest/globals";
 import { db } from "../db/connection";
 import { seed } from "../db/seed";
+import { createUser } from "../models";
 
 afterAll(() => {
   db.end();
@@ -83,20 +84,24 @@ describe("API", () => {
 
   describe("POST /user/login", () => {
     test("POST 200: Responds with the logged user's id'", () => {
-      return request(app)
-        .post("/user/login")
-        .send({
-          email: "john23@test.com",
-          password: "test",
-        })
-        .expect(200)
-        .then(({ body }) => {
-          const { user } = body;
+      return createUser("clairemuir", "claire@gmail.com", "PasswordTest1").then(
+        () => {
+          return request(app)
+            .post("/user/login")
+            .send({
+              email: "claire@gmail.com",
+              password: "PasswordTest1",
+            })
+            .expect(200)
+            .then(({ body }) => {
+              const { user } = body;
 
-          expect(user).toMatchObject({
-            user_id: 1,
-          });
-        });
+              expect(user).toMatchObject({
+                user_id: 6,
+              });
+            });
+        }
+      );
     });
 
     test("POST 400: Responds with an adequate status and error message when provided with malformed body", () => {
@@ -136,16 +141,20 @@ describe("API", () => {
     });
 
     test("POST 400: Responds with an adequate status and error message when the password provided does not match", () => {
-      return request(app)
-        .post("/user/login")
-        .send({
-          email: "john23@test.com",
-          password: "test4",
-        })
-        .expect(400)
-        .then(({ body }) => {
-          expect(body.message).toBe("Bad request.");
-        });
+      return createUser("laurasmith", "laura@test.com", "PasswordTest1").then(
+        () => {
+          return request(app)
+            .post("/user/login")
+            .send({
+              email: "laura@test.com",
+              password: "PasswordTest2",
+            })
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.message).toBe("Bad request.");
+            });
+        }
+      );
     });
   });
 
