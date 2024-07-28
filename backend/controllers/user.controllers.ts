@@ -1,11 +1,11 @@
 import { Response, Request, NextFunction } from "express";
 import { createUser, fetchUserById, logInUser } from "../models";
 
-export const registerUser = (
+export const registerUser = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   const {
     username,
     email,
@@ -16,18 +16,18 @@ export const registerUser = (
     `Handling post method for registering user with email '${email}'`
   );
 
-  createUser(username, email, password)
-    .then((user_id) => {
-      // Resource creation is typically 201 in REST
-      console.info(`User with id '${user_id}' registered successfully`);
+  try {
+    const user_id = await createUser(username, email, password);
 
-      res.status(200).location(`/user/${user_id}`).send({ user: { user_id } });
-    })
-    .catch((error) => {
-      console.error(`Error occurred registering user with email '${email}'`);
+    console.info(`User with id '${user_id}' registered successfully`);
 
-      next(error);
-    });
+    // Resource creation is typically 201 in REST
+    res.status(200).location(`/user/${user_id}`).send({ user: { user_id } });
+  } catch (error: unknown) {
+    console.error(`Error occurred registering user with email '${email}'`);
+
+    next(error);
+  }
 };
 
 export const signInUser = async (
