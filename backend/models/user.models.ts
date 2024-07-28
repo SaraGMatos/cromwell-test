@@ -108,23 +108,23 @@ export const logInUser = (
     });
 };
 
-export const fetchUserById = (user_id: number): Promise<User> => {
+export const fetchUserById = async (user_id: number): Promise<User> => {
   console.info(`Fetching user '${user_id}' from db`);
 
-  return db
-    .query<User>(`SELECT username, email FROM users WHERE user_id = $1`, [
-      user_id,
-    ])
-    .then(({ rows }) => {
-      const user = rows[0];
+  const { rows } = await db.query<User>(
+    `SELECT username, email FROM users WHERE user_id = $1`,
+    [user_id]
+  );
 
-      if (rows.length === 0) {
-        console.error(`Could not find user '${user_id}' in db`);
+  if (rows.length === 0) {
+    console.error(`Could not find user '${user_id}' in db`);
 
-        return Promise.reject({ status: 404, message: "Not found." });
-      }
+    return Promise.reject({ status: 404, message: "Not found." });
+  }
 
-      console.info(`Found user '${user_id}' in db`);
-      return user;
-    });
+  const user = rows[0];
+
+  console.info(`Found user '${user_id}' in db`);
+
+  return user;
 };
