@@ -6,10 +6,10 @@
   "scripts": {
     "test": "npm run build && dotenvx run --env-file=.env.development -- jest",
     "build": "npx tsc",
-    "start-dev": "npm run build && dotenvx run --env-file=.env.development -- nodemon dist/listen.js",
-    "start-prod": "npm run build && dotenvx run --env-file=.env.production -- nodemon dist/listen.js",
+    "start-dev": "npm run build && dotenvx run --env-file=.env.development -- nodemon dist/src/listen.js",
+    "start-prod": "npm run build && dotenvx run --env-file=.env.production -- nodemon dist/src/listen.js",
     "setup-dbs": "psql -f ./src/db/setup.sql",
-    "seed": "dotenvx run --env-file=.env.development -- node dist/db/run-seed.js"
+    "seed": "dotenvx run --env-file=.env.development -- node dist/db/src/run-seed.js"
   },
   "keywords": [],
   "author": "",

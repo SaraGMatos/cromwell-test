@@ -1,7 +1,7 @@
 import { ChangeEvent, FormEvent, useContext, useEffect, useState } from "react";
-import { loginUser } from "../api";
 import { useNavigate } from "react-router-dom";
 import { ErrorAlert } from "./ErrorAlert";
+import { AuthContext } from "../context/AuthContext";
 
 export function LoginPage(): JSX.Element {
   const [email, setEmail] = useState("");
@@ -14,25 +14,19 @@ export function LoginPage(): JSX.Element {
   const [isLoginError, setIsLoginError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
+  const { logIn } = useContext(AuthContext);
   const navigate = useNavigate();
 
   function handleSubmit(event: FormEvent): void {
     event?.preventDefault();
-    loginUser(email, password)
-      .then((result) => {
-        localStorage.setItem("CROMWELL_AUTH_TOKEN", result.data.token);
 
-        setIsLoginError(false);
+    logIn(email, password).catch((error) => {
+      setIsLoginError(true);
 
-        navigate("/");
-      })
-      .catch((error) => {
-        setIsLoginError(true);
-
-        error.response.status === 404
-          ? setErrorMessage("User not found, please sign up instead.")
-          : setErrorMessage("Invalid email or password.");
-      });
+      error.response.status === 404
+        ? setErrorMessage("User not found, please sign up instead.")
+        : setErrorMessage("Invalid email or password.");
+    });
   }
 
   function handleEmailBlur(): void {
