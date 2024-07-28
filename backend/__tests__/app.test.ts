@@ -163,9 +163,66 @@ describe("API", () => {
   });
 
   describe("GET /user/:id", () => {
-    test("GET 200: Responds with the required user object", () => {
+    test("GET 401: Responds with adequate code when there is no authorisation header", () => {
+      return request(app).get("/user/1").expect(401);
+    });
+
+    test("GET 401: Responds with adequate code when there is an invalid authorisation header", () => {
+      return request(app).get("/user/1").set({ authorization: "" }).expect(401);
+    });
+
+    test("GET 403: Responds with adequate code when the authorisation header is a malformed token", () => {
       return request(app)
         .get("/user/1")
+        .set({ authorization: "invalidtoken" })
+        .expect(403);
+    });
+
+    test("GET 403: Responds with adequate code when there is a valid token with an invalid signature", () => {
+      const untrustedToken = jwt.sign({ user_id: 1 }, "invalidsecret");
+
+      return request(app)
+        .get("/user/1")
+        .set({ authorization: untrustedToken })
+        .expect(403);
+    });
+
+    test("GET 403: Responds with an adequate code when the given token has expired", () => {
+      const expiredToken = jwt.sign(
+        { user_id: 1 },
+        process.env.JWT_SIGNING_KEY!,
+        { expiresIn: "-1h" }
+      );
+
+      return request(app)
+        .get("/user/1")
+        .set({ authorization: expiredToken })
+        .expect(403);
+    });
+
+    test("GET 403: Responds with an adequate code when the given token is valid, but for a different user", () => {
+      const wrongToken = jwt.sign(
+        { user_id: 1 },
+        process.env.JWT_SIGNING_KEY!,
+        { expiresIn: "1h" }
+      );
+
+      return request(app)
+        .get("/user/2")
+        .set({ authorization: wrongToken })
+        .expect(403);
+    });
+
+    test("GET 200: Responds with the required user object", () => {
+      const validToken = jwt.sign(
+        { user_id: 1 },
+        process.env.JWT_SIGNING_KEY!,
+        { expiresIn: "1h" }
+      );
+
+      return request(app)
+        .get("/user/1")
+        .set({ authorization: validToken })
         .expect(200)
         .then(({ body }) => {
           const { user } = body;
@@ -176,8 +233,15 @@ describe("API", () => {
     });
 
     test("GET 404: Responds with an adequate status and error message when given a non-existent id", () => {
+      const validToken = jwt.sign(
+        { user_id: 99 },
+        process.env.JWT_SIGNING_KEY!,
+        { expiresIn: "1h" }
+      );
+
       return request(app)
         .get("/user/99")
+        .set({ authorization: validToken })
         .expect(404)
         .then(({ body }) => {
           expect(body.message).toBe("Not found.");
@@ -185,8 +249,15 @@ describe("API", () => {
     });
 
     test("GET 400: Responds with an error when passed an id of an invalid data type", () => {
+      const validToken = jwt.sign(
+        { user_id: "invalid-id" },
+        process.env.JWT_SIGNING_KEY!,
+        { expiresIn: "1h" }
+      );
+
       return request(app)
         .get("/user/invalid-id")
+        .set({ authorization: validToken })
         .expect(400)
         .then(({ body }) => {
           expect(body.message).toBe("Bad request.");
