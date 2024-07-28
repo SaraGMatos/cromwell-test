@@ -1,5 +1,6 @@
 import { Response, Request, NextFunction } from "express";
 import { createUser, fetchUserById, logInUser } from "../models";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
 export const registerUser = async (
   req: Request,
@@ -61,10 +62,22 @@ export const getUserById = async (
   console.info(`Handling get request for user with id '${user_id}'`);
 
   try {
+    if (!req.headers.authorization) {
+      return next({ status: 401, message: "Unauthenticated request." });
+    }
+
+    const token = req.headers.authorization;
+    const secret = process.env.JWT_SIGNING_KEY!;
+    const payload = jwt.verify(token, secret) as JwtPayload;
+
     const formattedId = Number(user_id);
 
     if (!formattedId) {
       return next({ status: 400, message: "Bad request." });
+    }
+
+    if (payload["user_id"] !== formattedId) {
+      return next({ status: 403, message: "Unauthorised." });
     }
 
     const user = await fetchUserById(formattedId);
