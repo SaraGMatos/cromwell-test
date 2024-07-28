@@ -1,6 +1,10 @@
 import express, { Application } from "express";
 import { getUserById, registerUser, signInUser } from "./controllers";
-import { sendCustomError, sendServerError } from "./error_handlers";
+import {
+  sendCustomError,
+  sendJWTError,
+  sendServerError,
+} from "./error_handlers";
 import cors from "cors";
 
 export const app: Application = express();
@@ -16,5 +20,7 @@ app.post("/user/login", signInUser);
 app.get("/user/:user_id", getUserById);
 
 app.use(sendCustomError);
+
+app.use(sendJWTError);
 
 app.use(sendServerError);
