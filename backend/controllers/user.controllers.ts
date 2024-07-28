@@ -48,30 +48,31 @@ export const signInUser = (req: Request, res: Response, next: NextFunction) => {
     });
 };
 
-export const getUserById = (
+export const getUserById = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   const { user_id } = req.params;
-
   console.info(`Handling get request for user with id '${user_id}'`);
 
-  const formattedId = Number(user_id);
+  try {
+    const formattedId = Number(user_id);
 
-  if (!formattedId) {
-    return next({ status: 400, message: "Bad request." });
-  }
+    if (!formattedId) {
+      return next({ status: 400, message: "Bad request." });
+    }
 
-  fetchUserById(formattedId)
-    .then((user) => {
+    const user = await fetchUserById(formattedId);
+
+    if (user) {
       console.info(`User with id '${user_id}' fetched successfully`);
 
       res.status(200).send({ user });
-    })
-    .catch((error) => {
-      console.error(`Error occurred fetching user with id '${user_id}'`);
+    }
+  } catch (error: unknown) {
+    console.error(`Error occurred fetching user with id '${user_id}'`);
 
-      next(error);
-    });
+    next(error);
+  }
 };
