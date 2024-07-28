@@ -76,10 +76,10 @@ export const createUser = async (
   return userId;
 };
 
-export const logInUser = (
+export const logInUser = async (
   email: string,
   password: string
-): Promise<number | undefined | void> => {
+): Promise<number> => {
   if (!email || !password) {
     return Promise.reject({ status: 400, message: "Bad request." });
   }
@@ -88,23 +88,17 @@ export const logInUser = (
     return Promise.reject({ status: 400, message: "Bad request." });
   }
 
-  return fetchUserByEmail(email)
-    .then((user) => {
-      if (!user) {
-        return Promise.reject({ status: 404, message: "Not found." });
-      }
+  const user = await fetchUserByEmail(email);
 
-      return user;
-    })
-    .then((user) => {
-      return bcrypt.compare(password, user.password).then((passwordsMatch) => {
-        if (passwordsMatch) {
-          return user.user_id;
-        } else {
-          return Promise.reject({ status: 400, message: "Bad request." });
-        }
-      });
-    });
+  if (!user) {
+    return Promise.reject({ status: 404, message: "Not found." });
+  }
+
+  const passwordsMatch = await bcrypt.compare(password, user.password);
+
+  return passwordsMatch
+    ? user.user_id
+    : Promise.reject({ status: 400, message: "Bad request." });
 };
 
 export const fetchUserById = async (user_id: number): Promise<User> => {
