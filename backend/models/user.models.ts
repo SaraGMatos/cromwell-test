@@ -8,21 +8,19 @@ interface User {
   password: string;
 }
 
-const fetchUserByEmail = (email: string): Promise<User | null> => {
-  return db
-    .query(
-      `SELECT user_id, email, username, password FROM users WHERE email = $1`,
-      [email]
-    )
-    .then(({ rows }) => {
-      const user = rows[0];
+const fetchUserByEmail = async (email: string): Promise<User | null> => {
+  const { rows } = await db.query(
+    `SELECT user_id, email, username, password FROM users WHERE email = $1`,
+    [email]
+  );
 
-      if (rows.length === 0) {
-        return null;
-      }
+  if (rows.length === 0) {
+    return null;
+  }
 
-      return user;
-    });
+  const user = rows[0];
+
+  return user;
 };
 
 const saveUser = (
