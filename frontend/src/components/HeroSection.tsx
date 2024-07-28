@@ -1,28 +1,30 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
 import { getUser } from "../api";
+import { AuthContext } from "../context/AuthContext";
 
 export default function HeroSection(): JSX.Element {
-  const [user, setUser] = useState({ username: "", email: "" });
-  const { id } = useParams();
+  const { userId } = useContext(AuthContext);
+  const [userDetails, setUserDetails] = useState({ username: "", email: "" });
 
   useEffect(() => {
-    getUser(id).then((result) => {
-      setUser({
-        username: result.data.user.username,
-        email: result.data.user.email,
+    if (userId) {
+      getUser(userId).then((result) => {
+        setUserDetails({
+          username: result.data.user.username,
+          email: result.data.user.email,
+        });
       });
-    });
+    }
   }, []);
 
   const fields = [
     {
       fieldName: "Username",
-      description: user.username,
+      description: userDetails.username,
     },
     {
       fieldName: "Email address",
-      description: user.email,
+      description: userDetails.email,
     },
   ];
 
