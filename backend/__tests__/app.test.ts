@@ -44,7 +44,7 @@ describe("API", () => {
         .send({ username: "Sara", email: "test@gmail.com" })
         .expect(400)
         .then(({ body }) => {
-          expect(body.message).toBe("Bad request.");
+          expect(body.message).toBe("A validation error has occurred");
         });
     });
 
@@ -58,7 +58,7 @@ describe("API", () => {
         })
         .expect(400)
         .then(({ body }) => {
-          expect(body.message).toBe("Bad request.");
+          expect(body.message).toBe("A validation error has occurred");
         });
     });
 
@@ -77,7 +77,9 @@ describe("API", () => {
           })
           .expect(409)
           .then(({ body }) => {
-            expect(body.message).toBe("Already exists.");
+            expect(body.message).toBe(
+              "Resource of type 'user' already exists from 'test@gmail.com'"
+            );
           });
       });
     });
@@ -114,7 +116,7 @@ describe("API", () => {
         .send({ email: "john23@test.com" })
         .expect(400)
         .then(({ body }) => {
-          expect(body.message).toBe("Bad request.");
+          expect(body.message).toBe("A validation error has occurred");
         });
     });
 
@@ -127,7 +129,7 @@ describe("API", () => {
         })
         .expect(400)
         .then(({ body }) => {
-          expect(body.message).toBe("Bad request.");
+          expect(body.message).toBe("A validation error has occurred");
         });
     });
 
@@ -140,7 +142,9 @@ describe("API", () => {
         })
         .expect(404)
         .then(({ body }) => {
-          expect(body.message).toBe("Not found.");
+          expect(body.message).toBe(
+            "Could not find resource of type 'user' from 'sara@test.com'"
+          );
         });
     });
 
@@ -155,7 +159,9 @@ describe("API", () => {
             })
             .expect(400)
             .then(({ body }) => {
-              expect(body.message).toBe("Bad request.");
+              expect(body.message).toBe(
+                "Incorrect password provided for user with email laura@test.com"
+              );
             });
         }
       );
@@ -244,7 +250,9 @@ describe("API", () => {
         .set({ authorization: validToken })
         .expect(404)
         .then(({ body }) => {
-          expect(body.message).toBe("Not found.");
+          expect(body.message).toBe(
+            "Could not find resource of type 'user' from '99'"
+          );
         });
     });
 
@@ -260,7 +268,7 @@ describe("API", () => {
         .set({ authorization: validToken })
         .expect(400)
         .then(({ body }) => {
-          expect(body.message).toBe("Bad request.");
+          expect(body.message).toBe("A validation error has occurred");
         });
     });
   });

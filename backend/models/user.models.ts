@@ -1,6 +1,12 @@
 import { db } from "../db/connection";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import {
+  InvalidPasswordError,
+  NotFoundError,
+  ValidationError,
+  AlreadyExistsError,
+} from "../errors";
 
 interface User {
   user_id: number;
@@ -53,7 +59,8 @@ export const createUser = async (
 
   if (!username || !email || !password) {
     console.error(`Could not add user '${username}' to db`);
-    return Promise.reject({ status: 400, message: "Bad request." });
+
+    throw new ValidationError();
   }
 
   if (
@@ -61,13 +68,13 @@ export const createUser = async (
     typeof email !== "string" ||
     typeof password !== "string"
   ) {
-    return Promise.reject({ status: 400, message: "Bad request." });
+    throw new ValidationError();
   }
 
   const user = await fetchUserByEmail(email);
 
   if (user) {
-    return Promise.reject({ status: 409, message: "Already exists." });
+    throw new AlreadyExistsError("user", email);
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -82,34 +89,32 @@ export const logInUser = async (
   password: string
 ): Promise<string> => {
   if (!email || !password) {
-    return Promise.reject({ status: 400, message: "Bad request." });
+    throw new ValidationError();
   }
 
   if (typeof email !== "string" || typeof password !== "string") {
-    return Promise.reject({ status: 400, message: "Bad request." });
+    throw new ValidationError();
   }
 
   const user = await fetchUserByEmail(email);
 
   if (!user) {
-    return Promise.reject({ status: 404, message: "Not found." });
+    throw new NotFoundError("user", email);
   }
 
   const passwordsMatch = await bcrypt.compare(password, user.password);
 
   if (!passwordsMatch) {
-    return Promise.reject({ status: 400, message: "Bad request." });
+    throw new InvalidPasswordError(email);
   }
 
-  const secret = process.env.JWT_SIGNING_KEY;
-
-  if (!secret) {
-    return Promise.reject({ status: 500, message: "Server error." });
-  }
-
-  const token = jwt.sign({ user_id: user.user_id }, secret, {
-    expiresIn: "1h",
-  });
+  const token = jwt.sign(
+    { user_id: user.user_id },
+    process.env.JWT_SIGNING_KEY!,
+    {
+      expiresIn: "1h",
+    }
+  );
 
   return token;
 };
@@ -125,7 +130,7 @@ export const fetchUserById = async (user_id: number): Promise<User> => {
   if (rows.length === 0) {
     console.error(`Could not find user '${user_id}' in db`);
 
-    return Promise.reject({ status: 404, message: "Not found." });
+    throw new NotFoundError("user", user_id.toString());
   }
 
   const user = rows[0];

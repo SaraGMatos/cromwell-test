@@ -1,6 +1,11 @@
 import { Response, Request, NextFunction } from "express";
 import { createUser, fetchUserById, logInUser } from "../models";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import {
+  UnauthenticatedError,
+  UnauthorisedError,
+  ValidationError,
+} from "../errors";
 
 export const registerUser = async (
   req: Request,
@@ -63,7 +68,7 @@ export const getUserById = async (
 
   try {
     if (!req.headers.authorization) {
-      return next({ status: 401, message: "Unauthenticated request." });
+      throw new UnauthenticatedError();
     }
 
     const token = req.headers.authorization;
@@ -73,11 +78,11 @@ export const getUserById = async (
     const formattedId = Number(user_id);
 
     if (!formattedId) {
-      return next({ status: 400, message: "Bad request." });
+      throw new ValidationError();
     }
 
     if (payload["user_id"] !== formattedId) {
-      return next({ status: 403, message: "Unauthorised." });
+      throw new UnauthorisedError(user_id);
     }
 
     const user = await fetchUserById(formattedId);
