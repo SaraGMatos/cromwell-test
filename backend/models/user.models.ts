@@ -1,5 +1,6 @@
 import { db } from "../db/connection";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 interface User {
   user_id: number;
@@ -79,7 +80,7 @@ export const createUser = async (
 export const logInUser = async (
   email: string,
   password: string
-): Promise<number> => {
+): Promise<string> => {
   if (!email || !password) {
     return Promise.reject({ status: 400, message: "Bad request." });
   }
@@ -96,9 +97,21 @@ export const logInUser = async (
 
   const passwordsMatch = await bcrypt.compare(password, user.password);
 
-  return passwordsMatch
-    ? user.user_id
-    : Promise.reject({ status: 400, message: "Bad request." });
+  if (!passwordsMatch) {
+    return Promise.reject({ status: 400, message: "Bad request." });
+  }
+
+  const secret = process.env.JWT_SIGNING_KEY;
+
+  if (!secret) {
+    return Promise.reject({ status: 500, message: "Server error." });
+  }
+
+  const token = jwt.sign({ user_id: user.user_id }, secret, {
+    expiresIn: "1h",
+  });
+
+  return token;
 };
 
 export const fetchUserById = async (user_id: number): Promise<User> => {
