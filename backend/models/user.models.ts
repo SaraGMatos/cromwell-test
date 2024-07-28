@@ -43,11 +43,11 @@ const saveUser = async (
   return user_id as number;
 };
 
-export const createUser = (
+export const createUser = async (
   username: string,
   email: string,
   password: string
-) => {
+): Promise<number> => {
   console.info(`Adding user '${username}' to db`);
 
   if (!username || !email || !password) {
@@ -63,18 +63,17 @@ export const createUser = (
     return Promise.reject({ status: 400, message: "Bad request." });
   }
 
-  return fetchUserByEmail(email)
-    .then((user) => {
-      if (user) {
-        return Promise.reject({ status: 409, message: "Already exists." });
-      }
-    })
-    .then(() => {
-      return bcrypt.hash(password, 10);
-    })
-    .then((hash) => {
-      return saveUser(username, email, hash);
-    });
+  const user = await fetchUserByEmail(email);
+
+  if (user) {
+    return Promise.reject({ status: 409, message: "Already exists." });
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const userId = await saveUser(username, email, hashedPassword);
+
+  return userId;
 };
 
 export const logInUser = (
