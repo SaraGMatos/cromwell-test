@@ -37,7 +37,6 @@ const saveUser = (
       [username, email, hash]
     )
     .then(({ rows }) => {
-      console.log(rows);
       const { user_id } = rows[0];
 
       console.info(`Added user '${username}' in db`);
@@ -79,7 +78,10 @@ export const createUser = (
     });
 };
 
-export const logInUser = (email: string, password: string): Promise<number> => {
+export const logInUser = (
+  email: string,
+  password: string
+): Promise<number | undefined | void> => {
   if (!email || !password) {
     return Promise.reject({ status: 400, message: "Bad request." });
   }
@@ -88,15 +90,23 @@ export const logInUser = (email: string, password: string): Promise<number> => {
     return Promise.reject({ status: 400, message: "Bad request." });
   }
 
-  return fetchUserByEmail(email).then((user) => {
-    if (!user) {
-      return Promise.reject({ status: 404, message: "Not found." });
-    }
+  return fetchUserByEmail(email)
+    .then((user) => {
+      if (!user) {
+        return Promise.reject({ status: 404, message: "Not found." });
+      }
 
-    return password === user.password
-      ? user.user_id
-      : Promise.reject({ status: 400, message: "Bad request." });
-  });
+      return user;
+    })
+    .then((user) => {
+      return bcrypt.compare(password, user.password).then((passwordsMatch) => {
+        if (passwordsMatch) {
+          return user.user_id;
+        } else {
+          return Promise.reject({ status: 400, message: "Bad request." });
+        }
+      });
+    });
 };
 
 export const fetchUserById = (user_id: number): Promise<User> => {
