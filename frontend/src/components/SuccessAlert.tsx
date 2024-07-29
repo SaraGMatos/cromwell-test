@@ -7,7 +7,7 @@ export default function SuccessAlert({
     <section className="rounded-md bg-green-50 p-4">
       <div className="flex">
         <div className="ml-3">
-          <div className="mt-2 text-sm text-green-700">
+          <div className="mt-2 text-sm md:text-md lg:text-lg text-green-700">
             <p>{message}</p>
           </div>
         </div>

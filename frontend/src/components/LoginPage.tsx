@@ -71,18 +71,18 @@ export function LoginPage(): JSX.Element {
             src="https://i.postimg.cc/t4P6fw7X/Cromwell-Logo.png"
             alt="Cromwell Logo"
           />
-          <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+          <h2 className="mt-10 text-center text-xl lg:text-2xl font-bold leading-9 tracking-tight text-gray-900">
             Log in to your account
           </h2>
         </div>
 
-        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6" onSubmit={handleSubmit}>
+        <div className="flex flex-col items-center w-full mt-4">
+          <form className="space-y-7 w-full md:w-5/12" onSubmit={handleSubmit}>
             <div>
               {isLoginError && <ErrorAlert message={errorMessage} />}
               <label
                 htmlFor="email"
-                className="block text-sm font-medium leading-6 text-gray-900"
+                className="block text-sm md:text-md lg:text-xl font-medium leading-6 text-gray-900"
               >
                 Email address
               </label>
@@ -97,11 +97,13 @@ export function LoginPage(): JSX.Element {
                   onBlur={handleEmailBlur}
                   autoComplete="email"
                   required
-                  className="block w-full rounded-md border-0 py-1.5 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className="block w-full rounded-md border-0 py-1.5 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm md:text-md lg:text-lg sm:leading-6"
                 />
               </div>
               {emailInputError && (
-                <p className="text-[13px] text-red-500">{emailInputError}</p>
+                <p className="text-[13px] md:text-[13px] text-red-500">
+                  {emailInputError}
+                </p>
               )}
             </div>
 
@@ -109,7 +111,7 @@ export function LoginPage(): JSX.Element {
               <div className="flex items-center justify-between">
                 <label
                   htmlFor="password"
-                  className="block text-sm font-medium leading-6 text-gray-900"
+                  className="block text-sm md:text-md lg:text-xl font-medium leading-6 text-gray-900"
                 >
                   Password
                 </label>
@@ -125,10 +127,10 @@ export function LoginPage(): JSX.Element {
                   }}
                   onBlur={handlePasswordBlur}
                   required
-                  className="block w-full rounded-md border-0 py-1.5 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className="block w-full rounded-md border-0 py-1.5 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm md:text-md lg:text-lg sm:leading-6"
                 />
                 {passwordInputError && (
-                  <p className="text-[13px] text-red-500">
+                  <p className="text-[13px] md:text-[13px] text-red-500">
                     {passwordInputError}
                   </p>
                 )}
@@ -139,20 +141,20 @@ export function LoginPage(): JSX.Element {
               <button
                 type="submit"
                 disabled={isButtonDisabled}
-                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                className="flex w-full justify-center rounded-md bg-[#ff5100] px-3 py-1.5 text-sm md:text-md lg:text-lg font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 Sign in
               </button>
             </div>
           </form>
 
-          <p className="mt-10 text-center text-sm text-gray-500">
+          <p className="mt-10 text-center text-sm md:text-md lg:text-lg text-gray-500">
             Not a member?{" "}
             <button
               onClick={() => {
                 navigate("/register");
               }}
-              className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
+              className="font-semibold leading-6 text-[#ff5100] hover:text-indigo-500"
             >
               Sign up here!
             </button>
