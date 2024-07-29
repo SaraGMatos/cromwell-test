@@ -110,7 +110,7 @@ export function RegisterPage(): JSX.Element {
           <img
             className="object-contain"
             src="https://i.postimg.cc/t4P6fw7X/Cromwell-Logo.png"
-            alt="Cromwell Logo"
+            alt="Cromwell's logo - a bright orange capital C in the shape of half a nut"
           />
           <h2 className="mt-10 text-center text-xl lg:text-2xl font-bold leading-9 tracking-tight text-[gray-900]">
             Create an account
