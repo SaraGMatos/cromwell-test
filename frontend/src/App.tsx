@@ -3,6 +3,7 @@ import { LoginPage } from "./components/LoginPage";
 import { RegisterPage } from "./components/RegisterPage";
 import { HomePage } from "./components/HomePage";
 import { ProtectedRoutes } from "./components/ProtectedRoutes";
+import About from "./components/About";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
             </ProtectedRoutes>
           }
         />
+        <Route path="/about" element={<About />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
       </Routes>
