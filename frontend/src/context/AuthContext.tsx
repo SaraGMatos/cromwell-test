@@ -7,6 +7,7 @@ interface AuthState {
   isAuthenticated: boolean;
   userId: string | null;
   logIn: (email: string, password: string) => Promise<void>;
+  logOut: () => void;
 }
 
 interface CromwellJwtPayload extends JwtPayload {
@@ -35,6 +36,13 @@ export const AuthProvider = ({ children }: Props) => {
     setIsAuthenticated(true);
   };
 
+  const logOut = () => {
+    localStorage.removeItem("CROMWELL_AUTH_TOKEN");
+    setIsAuthenticated(false);
+    setUserId(null);
+    navigate("/login");
+  };
+
   useEffect(() => {
     const storedToken = localStorage.getItem("CROMWELL_AUTH_TOKEN");
 
@@ -50,7 +58,7 @@ export const AuthProvider = ({ children }: Props) => {
   }, [isAuthenticated]);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, userId, logIn }}>
+    <AuthContext.Provider value={{ isAuthenticated, userId, logIn, logOut }}>
       {children}
     </AuthContext.Provider>
   );
