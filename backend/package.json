@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npm run build && dotenvx run --env-file=.env.development -- jest",
+    "test": "npm run build && dotenvx run --env-file=.env.production -- jest",
     "build": "npx tsc",
     "start-dev": "npm run build && dotenvx run --env-file=.env.development -- nodemon dist/src/listen.js",
     "start-prod": "npm run build && dotenvx run --env-file=.env.production -- nodemon dist/src/listen.js",
