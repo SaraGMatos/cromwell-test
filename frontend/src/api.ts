@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const cromwellApi = axios.create({
-  baseURL: "https://cromwell-test-mrz5.onrender.com/",
+  baseURL: "http://localhost:5173",
 });
 
 export const createUser = (
