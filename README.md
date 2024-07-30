@@ -157,7 +157,8 @@ What you will find:
 
 ## Improvements
 
-- More and improved testing
+- Investigate how to use Redux for state management in the client side application.
+- Improve test coverage (Unit testing in both FE and BE)
 - The JWT could contain more information about the user
 - Auto logout when the JWT expires
 - .env files aren't typically checked into git (except for development & test)
