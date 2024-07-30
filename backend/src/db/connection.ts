@@ -3,17 +3,17 @@ import dotenv from "@dotenvx/dotenvx";
 
 dotenv.config();
 
-const ENV = process.env.NODE_ENV || "development";
-
 if (!process.env.PGDATABASE) {
   throw new Error("No PGDATABASE configured");
 }
 
-const config: PoolConfig = {};
-
-if (ENV === "production") {
-  config.connectionString = process.env.DATABASE_URL;
-  config.max = 2;
+if (!process.env.DATABASE_URL) {
+  throw new Error("No DATABASE_URL configured");
 }
+
+const config: PoolConfig = {
+  connectionString: process.env.DATABASE_URL,
+  max: 2,
+};
 
 export const db = new Pool(config);

@@ -6,12 +6,12 @@ import { seed } from "../db/seed";
 import { createUser } from "../models";
 import jwt from "jsonwebtoken";
 
-afterAll(() => {
-  db.end();
+afterAll(async () => {
+  await db.end();
 });
 
-beforeEach(() => {
-  return seed();
+beforeEach(async () => {
+  await seed();
 });
 
 describe("API", () => {
