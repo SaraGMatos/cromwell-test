@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const cromwellApi = axios.create({
-  baseURL: "http://localhost:3000",
+  baseURL: "https://cromwelltest.netlify.app",
 });
 
 export const createUser = (
