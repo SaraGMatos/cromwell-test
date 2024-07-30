@@ -23,5 +23,4 @@ export const seed = async (): Promise<void> => {
   );
 
   await db.query(insertUsersQueryStr);
-  await db.end();
 };
