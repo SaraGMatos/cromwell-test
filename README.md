@@ -88,6 +88,16 @@ Follow these instructions to run the REST API locally
    [ </path/to/repo>/backend ] npm run seed-dev
    ```
 
+#### Running API tests
+
+A suite of tests has been developed (see [app.test](./backend/src/__tests__/app.test.ts)) using Supertest and Jest.
+
+Execute the tests with the following command:
+
+```shell
+ [ </path/to/repo>/backend ] npm test
+```
+
 ### Run the Client Application
 
 Follow these instructions to run the client application locally
